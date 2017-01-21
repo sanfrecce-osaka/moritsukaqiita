@@ -14,6 +14,8 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
 group :development, :test do
   gem 'byebug', platform: :mri
+  gem 'ruby-debug-ide'
+  gem 'debase'
 end
 group :development do
   gem 'web-console', '>= 3.3.0'
@@ -27,16 +29,17 @@ gem 'devise'
 gem 'devise-i18n'
 gem 'pg'
 gem 'slim-rails'
+gem 'config'
 group :development do
   gem 'better_errors'
   gem 'guard-bundler'
   gem 'guard-rails'
   gem 'guard-rspec'
-  gem 'hub', :require=>nil
+  gem 'hub', :require => nil
   gem 'rails_layout'
-  gem 'rb-fchange', :require=>false
-  gem 'rb-fsevent', :require=>false
-  gem 'rb-inotify', :require=>false
+  gem 'rb-fchange', :require => false
+  gem 'rb-fsevent', :require => false
+  gem 'rb-inotify', :require => false
   gem 'spring-commands-rspec'
 end
 group :development, :test do
