@@ -9,7 +9,7 @@ feature 'Sign Up', :devise do
   #   When I sign up with a valid email address and password
   #   Then I see a successful sign up message
   scenario 'visitor can sign up with valid email address and password' do
-    sign_up_with('test@example.com', 'please123', 'please123')
+    sign_up_with('test@example.com', 'please12', 'please12')
     txts = [I18n.t( 'devise.registrations.signed_up'), I18n.t( 'devise.registrations.signed_up_but_unconfirmed')]
     expect(page).to have_content(/.*#{txts[0]}.*|.*#{txts[1]}.*/)
   end
@@ -19,7 +19,7 @@ feature 'Sign Up', :devise do
   #   When I sign up with an invalid email address
   #   Then I see an invalid email message
   scenario 'visitor cannot sign up with invalid email address' do
-    sign_up_with('bogus', 'please123', 'please123')
+    sign_up_with('bogus', 'please12', 'please12')
     expect(page).to have_content 'Email is invalid'
   end
 
@@ -37,8 +37,13 @@ feature 'Sign Up', :devise do
   #   When I sign up with a short password
   #   Then I see a 'too short password' message
   scenario 'visitor cannot sign up with a short password' do
-    sign_up_with('test@example.com', 'please', 'please')
-    expect(page).to have_content "Password is too short"
+    sign_up_with('test@example.com', 'please1', 'please1')
+    expect(page).to have_content 'Password is too short'
+  end
+
+  scenario 'visitor cannot sign up with a long password' do
+    sign_up_with('test@example.com', 'please123456789012345678901234567', 'please123456789012345678901234567')
+    expect(page).to have_content 'Password is too long'
   end
 
   # Scenario: Visitor cannot sign up without password confirmation
