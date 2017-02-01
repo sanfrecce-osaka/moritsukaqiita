@@ -54,5 +54,8 @@ group :test do
   gem 'capybara'
   gem 'database_cleaner'
   gem 'launchy'
-  gem 'selenium-webdriver'
+  gem 'poltergeist'
+end
+source 'https://rails-assets.org' do
+  gem 'rails-assets-tether', '>= 1.3.3'
 end

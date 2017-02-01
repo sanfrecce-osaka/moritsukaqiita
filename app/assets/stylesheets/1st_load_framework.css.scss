@@ -9,8 +9,59 @@ img {
 }
 
 // override for the 'Home' navigation link
-.navbar-brand {
-  font-size: inherit;
+nav.navbar {
+  @extend .navbar;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-box-align: center;
+  align-items: center;
+  border-bottom: 1px solid rgba(43, 91, 6, 0.15);
+  padding: 0 10px;
+  margin: 0 auto;
+}
+
+.navbar-left, .navbar-right {
+  @extend .navbar-nav;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-box-align: center;
+  align-items: center;
+  font-size: 1.33333em;
+}
+
+.navbar-left {
+  margin-right: auto;
+}
+
+.navbar-brand, .navbar-brand:hover, .navbar-brand:focus {
+  color: #59bb0c;
+}
+
+.nav-link, .nav-link:hover, .nav-link:focus {
+  color: #888;
+}
+
+.nav-link {
+  @extend .nav-link;
+  margin-right: 1rem;
+  font-size: 1rem;
+}
+
+.nav-item .btn-sign-up {
+  color: #fff;
+  border-color: #eea236;
+  background-color: #f0ad4e;
+  padding: 6px 12px;
+}
+
+.nav-item .dropdown-menu {
+  @extend .dropdown-menu;
+  right: 0;
+  left: auto;
 }
 
 // THESE ARE EXAMPLES YOU CAN MODIFY
@@ -66,7 +117,7 @@ section {
 }
 
 .authform .right {
-  float: right !important;
+  float: right;
 }
 
 .authform .button {
@@ -76,6 +127,10 @@ section {
 
 .authform fieldset {
   @extend .card;
+}
+
+.authform.checkbox {
+  width: 150px;
 }
 
 #error_explanation:not(:empty) {
