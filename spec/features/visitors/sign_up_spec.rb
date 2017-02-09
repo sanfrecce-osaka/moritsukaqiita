@@ -1,67 +1,81 @@
-# Feature: Sign up
-#   As a visitor
-#   I want to sign up
-#   So I can visit protected areas of the site
-feature 'Sign Up', :devise do
+feature 'ユーザ登録', :devise do
+  given(:valid_user_name) { '123' }
+  given(:valid_email) { 'test@example.com' }
+  given(:valid_password) { '12345678' }
 
-  # Scenario: Visitor can sign up with valid email address and password
-  #   Given I am not signed in
-  #   When I sign up with a valid email address and password
-  #   Then I see a successful sign up message
-  scenario 'visitor can sign up with valid email address and password' do
-    sign_up_with('test@example.com', 'please12', 'please12')
-    txts = [I18n.t( 'devise.registrations.signed_up'), I18n.t( 'devise.registrations.signed_up_but_unconfirmed')]
-    expect(page).to have_content(/.*#{txts[0]}.*|.*#{txts[1]}.*/)
+  scenario '正常終了' do
+    sign_up_with(valid_user_name, valid_email, valid_password)
+    expect(page).to have_content('アカウント登録を受け付けました。')
   end
 
-  # Scenario: Visitor cannot sign up with invalid email address
-  #   Given I am not signed in
-  #   When I sign up with an invalid email address
-  #   Then I see an invalid email message
-  scenario 'visitor cannot sign up with invalid email address' do
-    sign_up_with('bogus', 'please12', 'please12')
-    expect(page).to have_content 'Email is invalid'
+  scenario 'ユーザ名が未入力の場合、存在チェックのエラーメッセージのみが表示される' do
+    sign_up_with('', valid_email, valid_password)
+    expect(page).to have_content('ユーザ名が入力されていません。')
+    expect(page).not_to have_content('ユーザ名 はすでに存在しています。')
+    expect(page).not_to have_content('ユーザ名は3文字以上で入力してください。')
+    expect(page).not_to have_content('ユーザ名は半角英数字及び_, -のみ利用可能です。（-は先頭と末尾には使えません）')
   end
 
-  # Scenario: Visitor cannot sign up without password
-  #   Given I am not signed in
-  #   When I sign up without a password
-  #   Then I see a missing password message
-  scenario 'visitor cannot sign up without password' do
-    sign_up_with('test@example.com', '', '')
-    expect(page).to have_content "Password can't be blank"
+  scenario 'ユーザ名が3文字未満かつフォーマットが不正の場合、フォーマットチェックと長さチェックの両方のエラーメッセージが表示される' do
+    sign_up_with('あ', valid_email, valid_password)
+    expect(page).to have_content('ユーザ名は3文字以上で入力してください。')
+    expect(page).to have_content('ユーザ名は半角英数字及び_, -のみ利用可能です。（-は先頭と末尾には使えません）')
   end
 
-  # Scenario: Visitor cannot sign up with a short password
-  #   Given I am not signed in
-  #   When I sign up with a short password
-  #   Then I see a 'too short password' message
-  scenario 'visitor cannot sign up with a short password' do
-    sign_up_with('test@example.com', 'please1', 'please1')
-    expect(page).to have_content 'Password is too short'
+  scenario 'ユーザ名が3文字未満かつフォーマットが正しい場合、長さチェックのエラーメッセージのみが表示される' do
+    sign_up_with('ab', valid_email, valid_password)
+    expect(page).to have_content('ユーザ名は3文字以上で入力してください。')
+    expect(page).not_to have_content('ユーザ名は半角英数字及び_, -のみ利用可能です。（-は先頭と末尾には使えません）')
   end
 
-  scenario 'visitor cannot sign up with a long password' do
-    sign_up_with('test@example.com', 'please123456789012345678901234567', 'please123456789012345678901234567')
-    expect(page).to have_content 'Password is too long'
+  scenario 'ユーザ名が33文字以上の場合、長さチェックのエラーメッセージが表示される' do
+    sign_up_with('123456789012345678901234567890123', valid_email, valid_password)
+    expect(page).to have_content('ユーザ名は32文字以内で入力してください。')
   end
 
-  # Scenario: Visitor cannot sign up without password confirmation
-  #   Given I am not signed in
-  #   When I sign up without a password confirmation
-  #   Then I see a missing password confirmation message
-  scenario 'visitor cannot sign up without password confirmation' do
-    sign_up_with('test@example.com', 'please123', '')
-    expect(page).to have_content "Password confirmation doesn't match"
+  scenario 'ユーザ名のフォーマットが不正の場合、フォーマットチェックのエラーメッセージが表示される。' do
+    sign_up_with('-aZ', valid_email, valid_password)
+    expect(page).to have_content('ユーザ名は半角英数字及び_, -のみ利用可能です。（-は先頭と末尾には使えません）')
   end
 
-  # Scenario: Visitor cannot sign up with mismatched password and confirmation
-  #   Given I am not signed in
-  #   When I sign up with a mismatched password confirmation
-  #   Then I should see a mismatched password message
-  scenario 'visitor cannot sign up with mismatched password and confirmation' do
-    sign_up_with('test@example.com', 'please123', 'mismatch')
-    expect(page).to have_content "Password confirmation doesn't match"
+  scenario 'ユーザ名が登録済みの場合、一意性チェックのエラーメッセージが表示される', js: true do
+    sign_up_with(valid_user_name, valid_email, valid_password)
+    click_link '☰'
+    click_link 'ログアウト'
+    sign_up_with(valid_user_name, 'test1@example.com', valid_password)
+    expect(page).to have_content('ユーザ名 123 はすでに存在します。')
   end
 
+  scenario 'メールアドレスが未入力の場合、存在チェックのエラーメッセージが表示される' do
+    sign_up_with(valid_user_name, '', valid_password)
+    expect(page).to have_content('メールアドレスが入力されていません。')
+  end
+
+  scenario 'メールアドレスのフォーマットが不正の場合、フォーマットチェックのエラーメッセージが表示される' do
+    sign_up_with(valid_user_name, 'test', valid_password)
+    expect(page).to have_content('メールアドレスのフォーマットが正しくありません。')
+  end
+
+  scenario 'メールアドレスが登録済みの場合、一意性チェックのエラーメッセージが表示される', js: true do
+    sign_up_with(valid_user_name, valid_email, valid_password)
+    click_link '☰'
+    click_link 'ログアウト'
+    sign_up_with('1234', valid_email, valid_password)
+    expect(page).to have_content('メールアドレス test@example.com はすでに存在します。')
+  end
+
+  scenario 'パスワードが未入力の場合、存在チェックのエラーメッセージが表示される' do
+    sign_up_with(valid_user_name, valid_email, '')
+    expect(page).to have_content('パスワードが入力されていません。')
+  end
+
+  scenario 'パスワードが8文字未満の場合、長さチェックのエラーメッセージが表示される' do
+    sign_up_with(valid_user_name, valid_email, '1234567')
+    expect(page).to have_content('パスワードは8文字以上で入力してください。')
+  end
+
+  scenario 'パスワードが33文字以上の場合、長さチェックのエラーメッセージが表示される' do
+    sign_up_with(valid_user_name, valid_email, '123456789012345678901234567890123')
+    expect(page).to have_content('パスワードは32文字以内で入力してください。')
+  end
 end

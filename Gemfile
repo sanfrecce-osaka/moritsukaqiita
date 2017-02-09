@@ -30,6 +30,7 @@ gem 'devise-i18n'
 gem 'pg'
 gem 'slim-rails'
 gem 'config'
+gem 'font-awesome-rails'
 group :development do
   gem 'better_errors'
   gem 'guard-bundler'
@@ -55,6 +56,7 @@ group :test do
   gem 'database_cleaner'
   gem 'launchy'
   gem 'poltergeist'
+  gem 'shoulda-matchers'
 end
 source 'https://rails-assets.org' do
   gem 'rails-assets-tether', '>= 1.3.3'

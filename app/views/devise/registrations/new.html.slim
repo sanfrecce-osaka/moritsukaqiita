@@ -1,18 +1,45 @@
-.authform
-  = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { role: 'form'}) do |f|
-    h3
-      | Sign up
-    = devise_error_messages!
-    .form-group
-      = f.label :name
-      = f.text_field :name, autofocus: true, class: 'form-control'
-    .form-group
-      = f.label :email
-      = f.email_field :email, class: 'form-control'
-    .form-group
-      = f.label :password
-      = f.password_field :password, class: 'form-control'
-    .form-group
-      = f.label :password_confirmation
-      = f.password_field :password_confirmation, class: 'form-control'
-    = f.submit 'Sign up', class: 'button'
+.col-md-8.offset-md-2.col-sm-10.col-sm-offset-1
+  .col-12
+    h1.sign-up-title
+      | moritsukaQiitaへようこそ！
+    .sign-up-message
+      | 新規登録(無料)して利用を開始しましょう。
+  .d-flex.flex-wrap
+    .col-sm-6.authform-left
+      .authform-left-buttons
+        = link_to '#', class: 'btn btn-block btn-lg btn-github' do
+          = fa_icon 'github'
+          = 'GitHubアカウントで登録'
+        = link_to '#', class: 'btn btn-block btn-lg btn-twitter' do
+          = fa_icon 'twitter'
+          = 'Twitterアカウントで登録'
+        = link_to '#', class: 'btn btn-block btn-lg btn-google' do
+          = fa_icon 'google'
+          = 'Googleアカウントで登録'
+        .authform-left-buttons-annotation
+          | moritsukaQiitaが許可無くTwitterに投稿することはありません。
+      .authform-left-have-account
+        | もしmoritsukaQiitaのアカウントを持っている場合は
+        = link_to 'ログイン', new_user_session_path
+        = 'から。'
+    .col-sm-6.authform-right
+      = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { role: 'form'}) do |f|
+        .form-group
+          = f.text_field :user_name, autofocus: true, class: 'form-control', placeholder: 'ユーザ名'
+          - resource.errors.full_messages_for(:user_name).each do |message|
+            .error-message
+              = message
+        .form-group
+          = f.email_field :email, class: 'form-control', placeholder: 'メールアドレス'
+          - resource.errors.full_messages_for(:email).each do |message|
+            .error-message
+              = message
+        .form-group
+          = f.password_field :password, class: 'form-control', placeholder: 'パスワード'
+          - resource.errors.full_messages_for(:password).each do |message|
+            .error-message
+              = message
+        .form-group.authform-right-submit-annotation
+          = link_to '利用規約', '#'
+          = 'に同意のうえ、「利用規約に同意して登録」ボタンを押してください。'
+        = f.submit '利用規約に同意して登録', class: 'btn btn-block btn-primary btn-lg'

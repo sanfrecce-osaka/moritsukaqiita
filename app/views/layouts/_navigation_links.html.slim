@@ -2,7 +2,9 @@
   li.nav-item.dropdown
     = link_to '&#9776;'.html_safe, 'http://example.com', class: 'nav-link dropdown-toggle', id: 'navbarDropdownMenuLink', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false'
     .dropdown-menu aria-labelledby='navbarDropdownMenuLink'
-      = link_to 'ログアウト', destroy_user_session_path, method: 'delete', class: 'dropdown-item'
+      = link_to destroy_user_session_path, method: 'delete', class: 'dropdown-item' do
+        = fa_icon 'sign-out'
+        = 'ログアウト'
 - else
   li.nav-item
     = link_to 'ユーザ登録', new_user_registration_path, class: 'btn btn-sign-up nav-link'
