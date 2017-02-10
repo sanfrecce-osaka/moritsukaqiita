@@ -1,21 +1,33 @@
-.authform
-  = form_for(resource, as: resource_name, url: session_path(resource_name), html: { role: 'form'}) do |f|
-    h3
-      | Sign in
-    = devise_error_messages!
-    .form-group
-      - if devise_mapping.registerable?
-        = link_to 'Sign up', new_registration_path(resource_name), class: 'right'
-      = f.label :email
-      = f.email_field :email, autofocus: true, class: 'form-control'
-    .form-group
-      - if devise_mapping.recoverable?
-        = link_to "Forgot password?", new_password_path(resource_name), class: 'right'
-      = f.label :password
-      = f.password_field :password, class: 'form-control'
-    = f.submit 'Sign in', class: 'button'
-    - if devise_mapping.rememberable?
-      .checkbox
-        label
-          = f.check_box :remember_me
-          |  Remember me 
+.col-md-8.offset-md-2.col-sm-10.col-sm-offset-1
+  .col-12
+    h1.sign-in-title
+      | ログイン
+  .d-flex.flex-wrap
+    .col-sm-6.authform-left
+      .authform-left-buttons
+        = link_to '#', class: 'btn btn-block btn-lg btn-github' do
+          = fa_icon 'github'
+          = 'GitHubアカウントでログイン'
+        = link_to '#', class: 'btn btn-block btn-lg btn-twitter' do
+          = fa_icon 'twitter'
+          = 'Twitterアカウントでログイン'
+        = link_to '#', class: 'btn btn-block btn-lg btn-google' do
+          = fa_icon 'google'
+          = 'Googleアカウントでログイン'
+      .authform-left-not-have-account
+        | もしmoritsukaQiitaのアカウントを持っていない場合は
+        = link_to '新規登録', new_user_session_path
+        = 'から。'
+    .col-sm-6.authform-right
+      = form_for(resource, as: resource_name, url: session_path(resource_name), html: { role: 'form' }) do |f|
+        - if alert
+          .error-message-field
+            .error-message
+              = flash[:alert]
+        .form-group
+          = f.text_field :login_key, autofocus: true, class: 'form-control', placeholder: 'ユーザ名 または メールアドレス'
+        .form-group
+          = f.password_field :password, class: 'form-control', placeholder: 'パスワード'
+        .form-group.authform-right-forget-password
+          = link_to 'パスワードを忘れた場合', new_password_path(resource_name)
+        = f.submit 'ログイン', class: 'btn btn-block btn-primary btn-lg'

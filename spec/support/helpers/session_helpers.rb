@@ -8,11 +8,11 @@ module Features
       click_button '利用規約に同意して登録'
     end
 
-    def signin(email, password)
+    def signin(login_key, password)
       visit new_user_session_path
-      fill_in 'メールアドレス', with: email
+      fill_in 'ユーザ名 または メールアドレス', with: login_key
       fill_in 'パスワード', with: password
-      click_button 'Sign in'
+      click_button 'ログイン'
     end
   end
 end

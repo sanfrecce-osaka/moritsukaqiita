@@ -1,49 +1,38 @@
-# Feature: Sign in
-#   As a user
-#   I want to sign in
-#   So I can visit protected areas of the site
-feature 'Sign in', :devise do
+feature 'ログイン', :devise do
+  let(:user) { create(:user_with_valid_data) }
 
-  # Scenario: User cannot sign in if not registered
-  #   Given I do not exist as a user
-  #   When I sign in with valid credentials
-  #   Then I see an invalid credentials message
-  scenario 'user cannot sign in if not registered' do
+  scenario 'ユーザ登録が未完了の場合、エラーメッセージが表示されること' do
     signin('test@example.com', 'please123')
-    expect(page).to have_content I18n.t 'devise.failure.not_found_in_database', authentication_keys: 'Email'
+    expect(page).to have_content 'ユーザ名かパスワードが間違っています'
   end
 
-  # Scenario: User can sign in with valid credentials
-  #   Given I exist as a user
-  #   And I am not signed in
-  #   When I sign in with valid credentials
-  #   Then I see a success message
-  scenario 'user can sign in with valid credentials' do
-    user = FactoryGirl.create(:user)
+  scenario 'メールアドレスとパスワードでログインが成功すること' do
     signin(user.email, user.password)
-    expect(page).to have_content I18n.t 'devise.sessions.signed_in'
+    expect(page).to have_content 'ログインしました。'
   end
 
-  # Scenario: User cannot sign in with wrong email
-  #   Given I exist as a user
-  #   And I am not signed in
-  #   When I sign in with a wrong email
-  #   Then I see an invalid email message
-  scenario 'user cannot sign in with wrong email' do
-    user = FactoryGirl.create(:user)
+  scenario 'ユーザ名とパスワードでログインが成功すること' do
+    signin(user.user_name, user.password)
+    expect(page).to have_content 'ログインしました。'
+  end
+
+  scenario '未入力の場合、エラーメッセージが表示されること' do
+    signin('', '')
+    expect(page).to have_content 'ユーザ名かパスワードが間違っています'
+  end
+
+  scenario '間違ったメールアドレスを入力した場合、エラーメッセージが表示されること' do
     signin('invalid@email.com', user.password)
-    expect(page).to have_content I18n.t 'devise.failure.not_found_in_database', authentication_keys: 'Email'
+    expect(page).to have_content 'ユーザ名かパスワードが間違っています'
   end
 
-  # Scenario: User cannot sign in with wrong password
-  #   Given I exist as a user
-  #   And I am not signed in
-  #   When I sign in with a wrong password
-  #   Then I see an invalid password message
-  scenario 'user cannot sign in with wrong password' do
-    user = FactoryGirl.create(:user)
+  scenario '間違ったユーザ名を入力した場合、エラーメッセージが表示されること' do
+    signin('invalidname', user.password)
+    expect(page).to have_content 'ユーザ名かパスワードが間違っています'
+  end
+
+  scenario '間違ったパスワードを入力した場合、エラーメッセージが表示されること' do
     signin(user.email, 'invalidpass')
-    expect(page).to have_content I18n.t 'devise.failure.invalid', authentication_keys: 'Email'
+    expect(page).to have_content 'ユーザ名かパスワードが間違っています'
   end
-
 end
