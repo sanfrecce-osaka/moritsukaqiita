@@ -3,11 +3,34 @@ class Users::RegistrationsController < Devise::RegistrationsController
 # before_action :configure_account_update_params, only: [:update]
 
   def new
+    session.delete('devise.oauth_data')
     super
   end
 
   def create
-    super
+    build_resource(sign_up_params)
+    resource.social_profiles << SocialProfile.new(session['devise.oauth_data']) if session['devise.oauth_data']
+
+    if resource.save
+      yield resource if block_given?
+      if resource.persisted?
+        if resource.active_for_authentication?
+          set_flash_message! :notice, :signed_up
+          sign_up(resource_name, resource)
+          respond_with resource, location: after_sign_up_path_for(resource)
+        else
+          set_flash_message! :notice, :"signed_up_but_#{resource.inactive_message}"
+          expire_data_after_sign_in!
+          respond_with resource, location: after_inactive_sign_up_path_for(resource)
+        end
+      else
+        clean_up_passwords resource
+        set_minimum_password_length
+        respond_with resource
+      end
+    else
+      render 'devise/registrations/step1'
+    end
   end
 
   # GET /resource/edit
@@ -37,7 +60,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   protected
 
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:user_name])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:user_name, :email])
   end
 
   # If you have extra params to permit, append them to the sanitizer.
@@ -45,10 +68,23 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
   # end
 
-  # The path used after sign up.
-  # def after_sign_up_path_for(resource)
-  #   super(resource)
-  # end
+  def after_sign_up_path_for(resource)
+    if resource.social_profiles.count != 0
+      authenticated_root_path
+    else
+      super(resource)
+    end
+  end
+
+  def after_sign_in_path_for(resource)
+    if session[:user_return_to]
+      super
+    else
+      path = session[:previous_url] || authenticated_root_path
+      session.delete(:previous_url)
+      path
+    end
+  end
 
   # The path used after sign up for inactive accounts.
   # def after_inactive_sign_up_path_for(resource)

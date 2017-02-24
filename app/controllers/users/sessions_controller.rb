@@ -6,6 +6,13 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def create
+    conditions = {login_key: params['user']['login_key']}
+    user = User.find_first_by_auth_conditions(conditions)
+    if user && !user.encrypted_password.present?
+      self.resource = User.new(login_key: params['user']['login_key'])
+      flash.now.alert = 'パスワードが設定されていないユーザです。TwitterかGitHubでログインしてください。'
+      render action: 'new' and return
+    end
     super
   end
 
@@ -14,7 +21,7 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def after_sign_in_path_for(resource)
-    if session[:previous_url] == authenticated_root_path
+    if session[:user_return_to]
       super
     else
       path = session[:previous_url] || authenticated_root_path
@@ -24,7 +31,12 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def after_sign_out_path_for(resource)
-    request.referer
+    if request.referer !~ Regexp.new("\\A.*/users/.*\\z") &&
+      !request.xhr?
+      request.referer
+    else
+      unauthenticated_root_url
+    end
   end
 
   protected

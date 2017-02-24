@@ -7,6 +7,16 @@ FactoryGirl.define {
     factory :user_with_serial_data do
       sequence(:email) { |n| "test#{n}@example.com" }
       sequence(:user_name) { |n| "ab#{n}" }
+
+      factory :user_with_social_profile do
+        password nil
+
+        trait :with_twitter_profile do
+          after(:build) do |user|
+            user.social_profiles << build(:profile_with_valid_twitter)
+          end
+        end
+      end
     end
 
     factory :user_with_serial_email do
@@ -23,6 +33,10 @@ FactoryGirl.define {
 
     factory :user_with_empty_user_name do
       user_name nil
+    end
+
+    factory :user_with_empty_password do
+      password nil
     end
   end
 }

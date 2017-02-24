@@ -25,7 +25,7 @@ ja:
         subject: "アカウントのロック解除"
     omniauth_callbacks:
       failure: "%{kind} から承認されませんでした。理由：%{reason}"
-      success: "%{kind} から承認されました。"
+      success: "ログインしました。"
     passwords:
       no_token: "このページにアクセスする事が出来ません。正しいURLでアクセスしている事を確認して下さい。"
       send_instructions: "パスワードのリセット方法を数分以内にメールでご連絡します。"
@@ -34,7 +34,7 @@ ja:
       updated_not_active: "パスワードを変更しました。"
     registrations:
       destroyed: "アカウントを削除しました。またのご利用をお待ちしております。"
-      signed_up: "アカウント登録を受け付けました。"
+      signed_up: "Welcome to moritsukaQiita!"
       signed_up_but_inactive: "アカウントは登録されていますが、アクティブになっていないため利用できません。"
       signed_up_but_locked: "アカウントは登録されていますが、ロックされているため利用できません。"
       signed_up_but_unconfirmed: "確認メールを登録したメールアドレス宛に送信しました。リンクを開いてアカウントを有効にして下さい。"

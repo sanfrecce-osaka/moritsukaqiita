@@ -1,7 +1,9 @@
 class User < ApplicationRecord
   attr_accessor :login_key
 
-  devise :database_authenticatable, :registerable,
+  has_many :social_profiles
+
+  devise :database_authenticatable, :omniauthable , :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
          authentication_keys: [:login_key]
 
@@ -14,9 +16,17 @@ class User < ApplicationRecord
   def self.find_first_by_auth_conditions(warden_conditions)
     conditions = warden_conditions.dup
     if login_key = conditions.delete(:login_key)
-      where(conditions).where(['user_name = :value OR lower(email) = lower(:value)', { :value => login_key }]).first
+      where(conditions).where(['user_name = :value OR lower(email) = lower(:value)', { value: login_key }]).first
     else
       where(conditions).first
+    end
+  end
+
+  def password_required?
+    if self.social_profiles.present? && !encrypted_password.present?
+      false
+    else
+      super
     end
   end
 end

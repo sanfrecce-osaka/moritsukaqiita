@@ -30,7 +30,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path               = "#{::Rails.root}/spec/fixtures"
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -60,6 +60,8 @@ RSpec.configure do |config|
   Capybara.javascript_driver = :poltergeist
 
   config.use_transactional_fixtures = false
+
+  config.include Devise::Test::ControllerHelpers, type: :controller
 
   # database_cleaner関連のセットアップ
   require 'database_cleaner'

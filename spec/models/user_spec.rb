@@ -1,6 +1,7 @@
 describe User do
   let(:user) { build(:user_with_valid_data) }
   let(:upper_case_email) { user.email.upcase }
+  let(:user_with_empty_password) { build(:user_with_empty_password) }
 
   describe 'バリデーション' do
     describe '#email' do
@@ -49,7 +50,26 @@ describe User do
 
     describe '#password' do
       describe '存在チェック' do
-        it { is_expected.to validate_presence_of(:password) }
+        context 'SNSの情報を持たない場合' do
+          example '存在チェックは有効' do
+            expect(user_with_empty_password).not_to be_valid
+          end
+        end
+
+        context 'Twitterの情報を持つかつ暗号化されたパスワードを持たない場合' do
+          example '存在チェックは無効' do
+            user_with_empty_password.social_profiles << build(:profile_with_valid_twitter)
+            expect(user_with_empty_password).to be_valid
+          end
+        end
+
+        context 'Twitterの情報を持つかつ暗号化されたパスワードを持つ場合' do
+          example '存在チェックは有効' do
+            user.social_profiles << build(:profile_with_valid_twitter)
+            user.password = nil
+            expect(user).not_to be_valid
+          end
+        end
       end
 
       describe '長さチェック' do

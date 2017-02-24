@@ -31,6 +31,8 @@ gem 'pg'
 gem 'slim-rails'
 gem 'config'
 gem 'font-awesome-rails'
+gem 'omniauth'
+gem 'omniauth-twitter'
 group :development do
   gem 'better_errors'
   gem 'guard-bundler'
@@ -57,6 +59,7 @@ group :test do
   gem 'launchy'
   gem 'poltergeist'
   gem 'shoulda-matchers'
+  gem 'rails-controller-testing'
 end
 source 'https://rails-assets.org' do
   gem 'rails-assets-tether', '>= 1.3.3'

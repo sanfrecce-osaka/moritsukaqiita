@@ -8,7 +8,7 @@
         = link_to '#', class: 'btn btn-block btn-lg btn-github' do
           = fa_icon 'github'
           = 'GitHubアカウントでログイン'
-        = link_to '#', class: 'btn btn-block btn-lg btn-twitter' do
+        = link_to user_twitter_omniauth_authorize_path, class: 'btn btn-block btn-lg btn-twitter' do
           = fa_icon 'twitter'
           = 'Twitterアカウントでログイン'
         = link_to '#', class: 'btn btn-block btn-lg btn-google' do
@@ -16,7 +16,7 @@
           = 'Googleアカウントでログイン'
       .authform-left-not-have-account
         | もしmoritsukaQiitaのアカウントを持っていない場合は
-        = link_to '新規登録', new_user_session_path
+        = link_to '新規登録', new_user_registration_path
         = 'から。'
     .col-sm-6.authform-right
       = form_for(resource, as: resource_name, url: session_path(resource_name), html: { role: 'form' }) do |f|

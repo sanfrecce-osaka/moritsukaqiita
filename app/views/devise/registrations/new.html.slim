@@ -10,7 +10,7 @@
         = link_to '#', class: 'btn btn-block btn-lg btn-github' do
           = fa_icon 'github'
           = 'GitHubアカウントで登録'
-        = link_to '#', class: 'btn btn-block btn-lg btn-twitter' do
+        = link_to user_twitter_omniauth_authorize_path, class: 'btn btn-block btn-lg btn-twitter' do
           = fa_icon 'twitter'
           = 'Twitterアカウントで登録'
         = link_to '#', class: 'btn btn-block btn-lg btn-google' do
@@ -23,20 +23,13 @@
         = link_to 'ログイン', new_user_session_path
         = 'から。'
     .col-sm-6.authform-right
-      = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { role: 'form'}) do |f|
+      = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { role: 'form' }) do |f|
         .form-group
           = f.text_field :user_name, autofocus: true, class: 'form-control', placeholder: 'ユーザ名'
-          - resource.errors.full_messages_for(:user_name).each do |message|
-            .error-message
-              = message
         .form-group
           = f.email_field :email, class: 'form-control', placeholder: 'メールアドレス'
-          - resource.errors.full_messages_for(:email).each do |message|
-            .error-message
-              = message
         .form-group
           = f.password_field :password, class: 'form-control', placeholder: 'パスワード'
-          - resource.errors.full_messages_for(:password).each do |message|
             .error-message
               = message
         .form-group.authform-right-submit-annotation
