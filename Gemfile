@@ -33,6 +33,7 @@ gem 'config'
 gem 'font-awesome-rails'
 gem 'omniauth'
 gem 'omniauth-twitter'
+gem 'omniauth-github'
 group :development do
   gem 'better_errors'
   gem 'guard-bundler'

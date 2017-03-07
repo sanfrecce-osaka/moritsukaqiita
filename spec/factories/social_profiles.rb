@@ -4,7 +4,7 @@ FactoryGirl.define do
     uid 'test_uid0'
     user_name 'test0'
     email ''
-    image_url ''
+    image_url 'http://test.com'
     access_token 'test_access_token0'
     access_token_secret 'test_access_token_secret0'
 

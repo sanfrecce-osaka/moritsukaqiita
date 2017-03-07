@@ -60,37 +60,77 @@ describe Users::RegistrationsController do
     end
 
     describe 'Omniauthでの登録' do
-      let(:session_params) { { 'devise.oauth_data' => build(:profile_with_valid_twitter).attributes } }
+      let(:session_params) { { 'devise.oauth_data' => build("profile_with_valid_#{provider.to_s}").attributes } }
 
-      describe '登録成功' do
-        let(:user_params) { attributes_for(:user_with_empty_password) }
+      context 'Twitterでの登録の場合' do
+        let(:provider) { :twitter }
 
-        example 'Userが1件増えること' do
-          expect { subject }.to change(User, :count).by(1)
+        describe '登録成功' do
+          let(:user_params) { attributes_for(:user_with_empty_password) }
+
+          example 'Userが1件増えること' do
+            expect { subject }.to change(User, :count).by(1)
+          end
+
+          example 'SocialProfileが1件増えること' do
+            expect { subject }.to change(SocialProfile, :count).by(1)
+          end
+
+          example 'トップページへリダイレクトされること' do
+            expect(subject).to redirect_to authenticated_root_path
+          end
         end
 
-        example 'SocialProfileが1件増えること' do
-          expect { subject }.to change(SocialProfile, :count).by(1)
-        end
+        describe '登録失敗' do
+          let(:user_params) { attributes_for(:user_with_empty_password, user_name: 'あ') }
 
-        example 'トップページへリダイレクトされること' do
-          expect(subject).to redirect_to authenticated_root_path
+          example 'Userが増えないこと' do
+            expect { subject }.to change(User, :count).by(0)
+          end
+
+          example 'SocialProfileが増えないこと' do
+            expect { subject }.to change(SocialProfile, :count).by(0)
+          end
+
+          example 'step1テンプレートがレンダリングされること' do
+            expect(subject).to render_template 'devise/registrations/step1'
+          end
         end
       end
 
-      describe '登録失敗' do
-        let(:user_params) { attributes_for(:user_with_empty_password, user_name: 'あ') }
+      context 'GitHubでの登録の場合' do
+        let(:provider) { :github }
 
-        example 'Userが増えないこと' do
-          expect { subject }.to change(User, :count).by(0)
+        describe '登録成功' do
+          let(:user_params) { attributes_for(:user_with_empty_password) }
+
+          example 'Userが1件増えること' do
+            expect { subject }.to change(User, :count).by(1)
+          end
+
+          example 'SocialProfileが1件増えること' do
+            expect { subject }.to change(SocialProfile, :count).by(1)
+          end
+
+          example 'トップページへリダイレクトされること' do
+            expect(subject).to redirect_to authenticated_root_path
+          end
         end
 
-        example 'SocialProfileが増えないこと' do
-          expect { subject }.to change(SocialProfile, :count).by(0)
-        end
+        describe '登録失敗' do
+          let(:user_params) { attributes_for(:user_with_empty_password, user_name: 'あ') }
 
-        example 'step1テンプレートがレンダリングされること' do
-          expect(subject).to render_template 'devise/registrations/step1'
+          example 'Userが増えないこと' do
+            expect { subject }.to change(User, :count).by(0)
+          end
+
+          example 'SocialProfileが増えないこと' do
+            expect { subject }.to change(SocialProfile, :count).by(0)
+          end
+
+          example 'step1テンプレートがレンダリングされること' do
+            expect(subject).to render_template 'devise/registrations/step1'
+          end
         end
       end
     end

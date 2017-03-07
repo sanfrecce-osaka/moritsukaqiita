@@ -15,25 +15,29 @@ module Features
       click_button 'ログイン'
     end
 
-    def sign_up_with_omniauth(provider, params = nil)
+    def sign_up_with_omniauth(provider, params)
       visit new_user_registration_path
-      OmniAuth.config.mock_auth[provider] = build_authhash(params)
+      OmniAuth.config.mock_auth[provider] = build_auth_hash(params)
       case provider
       when :twitter
         click_link 'Twitterアカウントで登録'
+      when :github
+        click_link 'GitHubアカウントで登録'
       end
     end
 
     def sign_in_with_omniauth(provider, params)
       visit new_user_session_path
-      OmniAuth.config.mock_auth[provider] = build_authhash(params)
+      OmniAuth.config.mock_auth[provider] = build_auth_hash(params)
       case provider
       when :twitter
         click_link 'Twitterアカウントでログイン'
+      when :github
+        click_link 'GitHubアカウントでログイン'
       end
     end
 
-    def build_authhash(params)
+    def build_auth_hash(params)
       OmniAuth.config.test_mode = true
       OmniAuth::AuthHash.new(params)
     end

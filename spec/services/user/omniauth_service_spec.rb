@@ -78,6 +78,26 @@ describe User::OmniauthService do
 
         it { is_expected.to have_attributes(expected_attributes) }
       end
+
+      context '渡された情報がGitHubの情報だった場合' do
+        let(:provider) { 'github' }
+        let(:expected_attributes) do
+          expected_attributes                       = {}
+          expected_attributes[:provider]            = params['provider']
+          expected_attributes[:uid]                 = params['uid']
+          expected_attributes[:user_name]           = params['info']['nickname']
+          expected_attributes[:email]               = params['info']['email']
+          expected_attributes[:image_url]           = params['info']['image']
+          expected_attributes[:access_token]        = params['credentials']['token']
+          expected_attributes[:access_token_secret] = ''
+
+          expected_attributes
+        end
+
+        subject { profile }
+
+        it { is_expected.to have_attributes(expected_attributes) }
+      end
     end
   end
 end

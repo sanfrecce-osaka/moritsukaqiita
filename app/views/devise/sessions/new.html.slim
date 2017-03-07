@@ -5,7 +5,7 @@
   .d-flex.flex-wrap
     .col-sm-6.authform-left
       .authform-left-buttons
-        = link_to '#', class: 'btn btn-block btn-lg btn-github' do
+        = link_to user_github_omniauth_authorize_path, class: 'btn btn-block btn-lg btn-github' do
           = fa_icon 'github'
           = 'GitHubアカウントでログイン'
         = link_to user_twitter_omniauth_authorize_path, class: 'btn btn-block btn-lg btn-twitter' do

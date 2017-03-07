@@ -58,11 +58,11 @@ feature 'ログイン', :devise do
   end
 
   describe 'Omniauthでのログイン' do
-    given(:omniauth_hash) { omniauth_params(provider) }
+    given(:auth_hash) { omniauth_params(provider) }
 
     context 'ユーザ登録済の場合' do
       given(:user) { build(:user_with_empty_password) }
-      given(:profile) { build("profile_with_valid_#{provider.to_s}".to_sym, uid: omniauth_hash['uid']) }
+      given(:profile) { build("profile_with_valid_#{provider.to_s}".to_sym, uid: auth_hash['uid']) }
 
       background do
         user.social_profiles << profile
@@ -73,7 +73,17 @@ feature 'ログイン', :devise do
         given(:provider) { :twitter }
 
         scenario 'ログインに成功すること' do
-          sign_in_with_omniauth(provider, omniauth_hash)
+          sign_in_with_omniauth(provider, auth_hash)
+
+          expect(page).to have_content('ログインしました。')
+        end
+      end
+
+      context 'GitHubでの認証の場合' do
+        given(:provider) { :github }
+
+        scenario 'ログインに成功すること' do
+          sign_in_with_omniauth(provider, auth_hash)
 
           expect(page).to have_content('ログインしました。')
         end
@@ -85,10 +95,22 @@ feature 'ログイン', :devise do
         given(:provider) { :twitter }
 
         scenario '登録画面がユーザ名を入力済かつパスワードのフィールドが未表示の状態で表示されること' do
-          sign_in_with_omniauth(provider, omniauth_hash)
+          sign_in_with_omniauth(provider, auth_hash)
 
-          expect(page).to have_field 'ユーザ名', with: omniauth_hash['info']['nickname']
+          expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
           expect(page).to have_field 'メールアドレス', with: ''
+          expect(page).not_to have_field 'パスワード'
+        end
+      end
+
+      context 'GitHubでの認証の場合' do
+        given(:provider) { :github }
+
+        scenario '登録画面がユーザ名を入力済かつパスワードのフィールドが未表示の状態で表示されること' do
+          sign_in_with_omniauth(provider, auth_hash)
+
+          expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
+          expect(page).to have_field 'メールアドレス', with: auth_hash['info']['email']
           expect(page).not_to have_field 'パスワード'
         end
       end

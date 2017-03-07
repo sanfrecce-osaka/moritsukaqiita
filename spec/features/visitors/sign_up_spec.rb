@@ -103,7 +103,7 @@ feature 'ユーザ登録', :devise do
   end
 
   describe 'Omniauthでの登録' do
-    given(:omniauth_hash) { omniauth_params(provider) }
+    given(:auth_hash) { omniauth_params(provider) }
 
     context 'ユーザ未登録の場合' do
       context 'Twitterでの認証の場合' do
@@ -111,10 +111,10 @@ feature 'ユーザ登録', :devise do
 
         describe '登録成功' do
           scenario 'Twitter認証 > メールアドレス入力 > 登録完了' do
-            omniauth_hash['info']['nickname'] = valid_user_name
-            sign_up_with_omniauth(provider, omniauth_hash)
+            auth_hash['info']['nickname'] = valid_user_name
+            sign_up_with_omniauth(provider, auth_hash)
 
-            expect(page).to have_field 'ユーザ名', with: omniauth_hash['info']['nickname']
+            expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
             expect(page).to have_field 'メールアドレス', with: ''
             expect(page).not_to have_field 'パスワード'
 
@@ -125,7 +125,7 @@ feature 'ユーザ登録', :devise do
           end
 
           scenario 'Twitter認証 > ユーザ名変更、メールアドレス入力 > 登録完了' do
-            sign_up_with_omniauth(provider, omniauth_hash)
+            sign_up_with_omniauth(provider, auth_hash)
 
             fill_in 'ユーザ名', with: valid_user_name
             fill_in 'メールアドレス', with: valid_email
@@ -137,8 +137,8 @@ feature 'ユーザ登録', :devise do
 
         describe 'エラーメッセージ表示' do
           scenario 'ユーザ名が3文字未満かつフォーマットが不正の場合、フォーマットチェックと長さチェックの両方のエラーメッセージが表示されること' do
-            omniauth_hash['info']['nickname'] = '.c'
-            sign_up_with_omniauth(provider, omniauth_hash)
+            auth_hash['info']['nickname'] = '.c'
+            sign_up_with_omniauth(provider, auth_hash)
 
             fill_in 'メールアドレス', with: valid_email
             click_button '利用規約に同意して登録'
@@ -148,8 +148,8 @@ feature 'ユーザ登録', :devise do
           end
 
           scenario 'ユーザ名が3文字未満かつフォーマットが正しい場合、長さチェックのエラーメッセージのみが表示されること' do
-            omniauth_hash['info']['nickname'] = 'ab'
-            sign_up_with_omniauth(provider, omniauth_hash)
+            auth_hash['info']['nickname'] = 'ab'
+            sign_up_with_omniauth(provider, auth_hash)
 
             fill_in 'メールアドレス', with: valid_email
             click_button '利用規約に同意して登録'
@@ -159,8 +159,8 @@ feature 'ユーザ登録', :devise do
           end
 
           scenario 'ユーザ名が33文字以上の場合、長さチェックのエラーメッセージが表示される' do
-            omniauth_hash['info']['nickname'] = '123456789012345678901234567890123'
-            sign_up_with_omniauth(provider, omniauth_hash)
+            auth_hash['info']['nickname'] = '123456789012345678901234567890123'
+            sign_up_with_omniauth(provider, auth_hash)
 
             fill_in 'メールアドレス', with: valid_email
             click_button '利用規約に同意して登録'
@@ -169,8 +169,8 @@ feature 'ユーザ登録', :devise do
           end
 
           scenario 'ユーザ名のフォーマットが不正の場合、フォーマットチェックのエラーメッセージが表示されること' do
-            omniauth_hash['info']['nickname'] = '-aZ'
-            sign_up_with_omniauth(provider, omniauth_hash)
+            auth_hash['info']['nickname'] = '-aZ'
+            sign_up_with_omniauth(provider, auth_hash)
 
             fill_in 'メールアドレス', with: valid_email
             click_button '利用規約に同意して登録'
@@ -184,8 +184,8 @@ feature 'ユーザ登録', :devise do
             click_link '☰'
             click_link 'ログアウト'
 
-            omniauth_hash['info']['nickname'] = valid_user_name
-            sign_up_with_omniauth(provider, omniauth_hash)
+            auth_hash['info']['nickname'] = valid_user_name
+            sign_up_with_omniauth(provider, auth_hash)
 
             fill_in 'メールアドレス', with: 'test1@example.com'
             click_button '利用規約に同意して登録'
@@ -194,11 +194,136 @@ feature 'ユーザ登録', :devise do
           end
         end
       end
+
+      context 'GitHubでの認証の場合' do
+        given(:provider) { :github }
+
+        describe '登録成功' do
+          scenario 'GitHub認証 > メールアドレス入力 > 登録完了' do
+            auth_hash['info']['nickname'] = valid_user_name
+            sign_up_with_omniauth(provider, auth_hash)
+
+            expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
+            expect(page).to have_field 'メールアドレス', with: auth_hash['info']['email']
+            expect(page).not_to have_field 'パスワード'
+
+            fill_in 'メールアドレス', with: valid_email
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content 'Welcome to moritsukaQiita!'
+          end
+
+          scenario 'GitHub認証 > ユーザ名変更、メールアドレス変更 > 登録完了' do
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'ユーザ名', with: valid_user_name
+            fill_in 'メールアドレス', with: valid_email
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content 'Welcome to moritsukaQiita!'
+          end
+        end
+
+        describe 'エラーメッセージ表示' do
+          scenario 'ユーザ名が3文字未満かつフォーマットが不正の場合、フォーマットチェックと長さチェックの両方のエラーメッセージが表示されること' do
+            auth_hash['info']['nickname'] = '.c'
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'メールアドレス', with: valid_email
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content('ユーザ名は3文字以上で入力してください。')
+            expect(page).to have_content('ユーザ名は半角英数字及び_, -のみ利用可能です。（-は先頭と末尾には使えません）')
+          end
+
+          scenario 'ユーザ名が3文字未満かつフォーマットが正しい場合、長さチェックのエラーメッセージのみが表示されること' do
+            auth_hash['info']['nickname'] = 'ab'
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'メールアドレス', with: valid_email
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content('ユーザ名は3文字以上で入力してください。')
+            expect(page).not_to have_content('ユーザ名は半角英数字及び_, -のみ利用可能です。（-は先頭と末尾には使えません）')
+          end
+
+          scenario 'ユーザ名が33文字以上の場合、長さチェックのエラーメッセージが表示される' do
+            auth_hash['info']['nickname'] = '123456789012345678901234567890123'
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'メールアドレス', with: valid_email
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content('ユーザ名は32文字以内で入力してください。')
+          end
+
+          scenario 'ユーザ名のフォーマットが不正の場合、フォーマットチェックのエラーメッセージが表示されること' do
+            auth_hash['info']['nickname'] = '-aZ'
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'メールアドレス', with: valid_email
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content('ユーザ名は半角英数字及び_, -のみ利用可能です。（-は先頭と末尾には使えません）')
+          end
+
+          scenario 'ユーザ名が登録済みの場合、一意性チェックのエラーメッセージが表示されること', js: true do
+            sign_up_with_password(valid_user_name, valid_email, valid_password)
+
+            click_link '☰'
+            click_link 'ログアウト'
+
+            auth_hash['info']['nickname'] = valid_user_name
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'メールアドレス', with: 'test1@example.com'
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content('ユーザ名 123 はすでに存在します。')
+          end
+
+          scenario 'メールアドレスが未入力の場合、存在チェックのエラーメッセージが表示されること' do
+            auth_hash['info']['email'] = ''
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'ユーザ名', with: valid_user_name
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content('メールアドレスが入力されていません。')
+          end
+
+          scenario 'メールアドレスのフォーマットが不正の場合、フォーマットチェックのエラーメッセージが表示されること' do
+            auth_hash['info']['email'] = 'foo@bar_baz.com'
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'ユーザ名', with: valid_user_name
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content('メールアドレスのフォーマットが正しくありません。')
+          end
+
+          scenario 'メールアドレスが登録済みの場合、一意性チェックのエラーメッセージが表示されること', js: true do
+            sign_up_with_password(valid_user_name, valid_email, valid_password)
+
+            click_link '☰'
+            click_link 'ログアウト'
+
+            auth_hash['info']['email'] = valid_email
+            sign_up_with_omniauth(provider, auth_hash)
+
+            fill_in 'ユーザ名', with: 'test1'
+            click_button '利用規約に同意して登録'
+
+            expect(page).to have_content('メールアドレス test@example.com はすでに存在します。')
+          end
+        end
+      end
     end
 
     context 'ユーザ登録済の場合' do
       given(:user) { build(:user_with_empty_password) }
-      given(:profile) { build("profile_with_valid_#{provider.to_s}".to_sym, uid: omniauth_hash['uid']) }
+      given(:profile) { build("profile_with_valid_#{provider.to_s}".to_sym, uid: auth_hash['uid']) }
+
       background do
         user.social_profiles << profile
         user.save
@@ -208,7 +333,17 @@ feature 'ユーザ登録', :devise do
         given(:provider) { :twitter }
 
         scenario 'ログインに成功すること' do
-          sign_up_with_omniauth(provider, omniauth_hash)
+          sign_up_with_omniauth(provider, auth_hash)
+
+          expect(page).to have_content('ログインしました。')
+        end
+      end
+
+      context 'GitHubでの認証の場合' do
+        given(:provider) { :github }
+
+        scenario 'ログインに成功すること' do
+          sign_up_with_omniauth(provider, auth_hash)
 
           expect(page).to have_content('ログインしました。')
         end

@@ -19,6 +19,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   alias_method :twitter, :callback_for_all_providers
+  alias_method :github, :callback_for_all_providers
 
   def passthru
     super
