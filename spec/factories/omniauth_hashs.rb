@@ -23,6 +23,14 @@ FactoryGirl.define do
         'secret' => '',
         'token' => Faker::Internet.password
       } }
+
+      factory :google_auth_hash do
+        provider 'google'
+        info { {
+          'email' => Faker::Internet.email,
+          'image' => Faker::Internet.url,
+        } }
+      end
     end
 
     initialize_with { attributes }

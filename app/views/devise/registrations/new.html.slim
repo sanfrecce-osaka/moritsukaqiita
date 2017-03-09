@@ -13,7 +13,7 @@
         = link_to user_twitter_omniauth_authorize_path, class: 'btn btn-block btn-lg btn-twitter' do
           = fa_icon 'twitter'
           = 'Twitterアカウントで登録'
-        = link_to '#', class: 'btn btn-block btn-lg btn-google' do
+        = link_to user_google_omniauth_authorize_path, class: 'btn btn-block btn-lg btn-google' do
           = fa_icon 'google'
           = 'Googleアカウントで登録'
         .authform-left-buttons-annotation

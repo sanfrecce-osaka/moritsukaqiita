@@ -10,7 +10,12 @@ FactoryGirl.define do
 
     factory :profile_with_valid_github do
       provider 'github'
+      email 'test0@test.com'
       access_token_secret ''
+
+      factory :profile_with_valid_google do
+        provider 'google'
+      end
     end
   end
 end

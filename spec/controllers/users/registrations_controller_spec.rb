@@ -133,6 +133,42 @@ describe Users::RegistrationsController do
           end
         end
       end
+
+      context 'Googleでの登録の場合' do
+        let(:provider) { :google }
+
+        describe '登録成功' do
+          let(:user_params) { attributes_for(:user_with_empty_password) }
+
+          example 'Userが1件増えること' do
+            expect { subject }.to change(User, :count).by(1)
+          end
+
+          example 'SocialProfileが1件増えること' do
+            expect { subject }.to change(SocialProfile, :count).by(1)
+          end
+
+          example 'トップページへリダイレクトされること' do
+            expect(subject).to redirect_to authenticated_root_path
+          end
+        end
+
+        describe '登録失敗' do
+          let(:user_params) { attributes_for(:user_with_empty_password, user_name: 'あ') }
+
+          example 'Userが増えないこと' do
+            expect { subject }.to change(User, :count).by(0)
+          end
+
+          example 'SocialProfileが増えないこと' do
+            expect { subject }.to change(SocialProfile, :count).by(0)
+          end
+
+          example 'step1テンプレートがレンダリングされること' do
+            expect(subject).to render_template 'devise/registrations/step1'
+          end
+        end
+      end
     end
   end
 end

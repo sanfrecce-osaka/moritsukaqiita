@@ -55,12 +55,12 @@ describe User::OmniauthService do
   end
 
   describe '#build_omniauth_data' do
-    let(:params) { build("#{provider}_auth_hash".to_sym).map { |key, value| [key.to_s, value] }.to_h }
+    let(:params) { build("#{provider.to_s}_auth_hash".to_sym).map { |key, value| [key.to_s, value] }.to_h }
     let(:profile) { service.send(:build_omniauth_data) }
 
     describe 'ポリシーに沿って値が格納されているかの検証' do
       context '渡された情報がTwitterの情報だった場合' do
-        let(:provider) { 'twitter' }
+        let(:provider) { :twitter }
         let(:expected_attributes) do
           expected_attributes                       = {}
           expected_attributes[:provider]            = params['provider']
@@ -80,12 +80,32 @@ describe User::OmniauthService do
       end
 
       context '渡された情報がGitHubの情報だった場合' do
-        let(:provider) { 'github' }
+        let(:provider) { :github }
         let(:expected_attributes) do
           expected_attributes                       = {}
           expected_attributes[:provider]            = params['provider']
           expected_attributes[:uid]                 = params['uid']
           expected_attributes[:user_name]           = params['info']['nickname']
+          expected_attributes[:email]               = params['info']['email']
+          expected_attributes[:image_url]           = params['info']['image']
+          expected_attributes[:access_token]        = params['credentials']['token']
+          expected_attributes[:access_token_secret] = ''
+
+          expected_attributes
+        end
+
+        subject { profile }
+
+        it { is_expected.to have_attributes(expected_attributes) }
+      end
+
+      context '渡された情報がGoogleの情報だった場合' do
+        let(:provider) { :google }
+        let(:expected_attributes) do
+          expected_attributes                       = {}
+          expected_attributes[:provider]            = params['provider']
+          expected_attributes[:uid]                 = params['uid']
+          expected_attributes[:user_name]           = params['info']['email'].split('@').first
           expected_attributes[:email]               = params['info']['email']
           expected_attributes[:image_url]           = params['info']['image']
           expected_attributes[:access_token]        = params['credentials']['token']

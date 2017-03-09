@@ -23,6 +23,8 @@ module Features
         click_link 'Twitterアカウントで登録'
       when :github
         click_link 'GitHubアカウントで登録'
+      when :google
+        click_link 'Googleアカウントで登録'
       end
     end
 
@@ -34,6 +36,8 @@ module Features
         click_link 'Twitterアカウントでログイン'
       when :github
         click_link 'GitHubアカウントでログイン'
+      when :google
+        click_link 'Googleアカウントでログイン'
       end
     end
 

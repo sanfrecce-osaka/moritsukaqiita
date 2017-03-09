@@ -34,6 +34,7 @@ gem 'font-awesome-rails'
 gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-github'
+gem 'omniauth-google-oauth2'
 group :development do
   gem 'better_errors'
   gem 'guard-bundler'

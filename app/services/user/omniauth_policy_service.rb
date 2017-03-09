@@ -21,6 +21,19 @@ class User::OmniauthPolicyService
       @provider            = auth['provider']
       @uid                 = auth['uid']
       @user_name           = auth['info']['nickname']
+      @email               = auth['info']['email'] || ''
+      @image_url           = auth['info']['image']
+      @access_token        = auth['credentials']['token']
+      @access_token_secret = ''
+      freeze
+    end
+  end
+
+  class Google < User::OmniauthPolicyService::Base
+    def initialize(auth)
+      @provider            = auth['provider']
+      @uid                 = auth['uid']
+      @user_name           = auth['info']['email'].split('@').first
       @email               = auth['info']['email']
       @image_url           = auth['info']['image']
       @access_token        = auth['credentials']['token']

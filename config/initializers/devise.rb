@@ -273,4 +273,5 @@ Devise.setup do |config|
   # config.omniauth_path_prefix = '/my_engine/users/auth'
   config.omniauth :twitter,  Settings.twitter[:consumer_key], Settings.twitter[:consumer_secret]
   config.omniauth :github, Settings.github[:client_id], Settings.github[:client_secret], scope: 'gist'
+  config.omniauth :google_oauth2, Settings.google[:client_id], Settings.google[:client_secret], name: :google
 end

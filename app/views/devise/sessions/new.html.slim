@@ -11,7 +11,7 @@
         = link_to user_twitter_omniauth_authorize_path, class: 'btn btn-block btn-lg btn-twitter' do
           = fa_icon 'twitter'
           = 'Twitterアカウントでログイン'
-        = link_to '#', class: 'btn btn-block btn-lg btn-google' do
+        = link_to user_google_omniauth_authorize_path, class: 'btn btn-block btn-lg btn-google' do
           = fa_icon 'google'
           = 'Googleアカウントでログイン'
       .authform-left-not-have-account

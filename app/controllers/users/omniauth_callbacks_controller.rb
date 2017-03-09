@@ -20,6 +20,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   alias_method :twitter, :callback_for_all_providers
   alias_method :github, :callback_for_all_providers
+  alias_method :google, :callback_for_all_providers
 
   def passthru
     super

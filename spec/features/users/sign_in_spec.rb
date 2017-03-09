@@ -88,30 +88,71 @@ feature 'ログイン', :devise do
           expect(page).to have_content('ログインしました。')
         end
       end
+
+      context 'Googleでの認証の場合' do
+        given(:provider) { :google }
+
+        scenario 'ログインに成功すること' do
+          sign_in_with_omniauth(provider, auth_hash)
+
+          expect(page).to have_content('ログインしました。')
+        end
+      end
     end
 
     context 'ユーザ未登録の場合' do
       context 'Twitterでの認証の場合' do
         given(:provider) { :twitter }
 
-        scenario '登録画面がユーザ名を入力済かつパスワードのフィールドが未表示の状態で表示されること' do
-          sign_in_with_omniauth(provider, auth_hash)
+        describe '登録画面のフィールドの初期値' do
+          scenario '登録画面がユーザ名を入力済かつメールアドレスを入力済かつパスワードのフィールドが非表示の状態で表示されること' do
+            sign_in_with_omniauth(provider, auth_hash)
 
-          expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
-          expect(page).to have_field 'メールアドレス', with: ''
-          expect(page).not_to have_field 'パスワード'
+            expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
+            expect(page).to have_field 'メールアドレス', with: ''
+            expect(page).not_to have_field 'パスワード'
+          end
         end
       end
 
       context 'GitHubでの認証の場合' do
         given(:provider) { :github }
 
-        scenario '登録画面がユーザ名を入力済かつパスワードのフィールドが未表示の状態で表示されること' do
-          sign_in_with_omniauth(provider, auth_hash)
+        describe '登録画面のフィールドの初期値' do
+          context 'GitHubにメールアドレスが登録されているかつ公開されている場合' do
+            scenario '登録画面がユーザ名を入力済かつメールアドレスを入力済かつパスワードのフィールドが非表示の状態で表示されること' do
+              sign_in_with_omniauth(provider, auth_hash)
 
-          expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
-          expect(page).to have_field 'メールアドレス', with: auth_hash['info']['email']
-          expect(page).not_to have_field 'パスワード'
+              expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
+              expect(page).to have_field 'メールアドレス', with: auth_hash['info']['email']
+              expect(page).not_to have_field 'パスワード'
+            end
+          end
+
+          context 'GitHubにメールアドレスが登録されていないまたは非公開の場合' do
+            scenario '登録画面がユーザ名を入力済かつメールアドレスを未入力かつパスワードのフィールドが非表示の状態で表示されること' do
+              auth_hash['info']['email'] = nil
+              sign_in_with_omniauth(provider, auth_hash)
+
+              expect(page).to have_field 'ユーザ名', with: auth_hash['info']['nickname']
+              expect(page).to have_field 'メールアドレス', with: ''
+              expect(page).not_to have_field 'パスワード'
+            end
+          end
+        end
+      end
+
+      context 'Googleでの認証の場合' do
+        given(:provider) { :google }
+
+        describe '登録画面のフィールドの初期値' do
+          scenario '登録画面がユーザ名を入力済かつメールアドレスを入力済かつパスワードのフィールドが非表示の状態で表示されること' do
+            sign_in_with_omniauth(provider, auth_hash)
+
+            expect(page).to have_field 'ユーザ名', with: auth_hash['info']['email'].split('@').first
+            expect(page).to have_field 'メールアドレス', with: auth_hash['info']['email']
+            expect(page).not_to have_field 'パスワード'
+          end
         end
       end
     end
