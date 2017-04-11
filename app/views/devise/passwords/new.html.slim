@@ -1,11 +1,18 @@
-.authform
-  = form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post, :role => 'form'}) do |f|
-    h3
-      | Forgot your password?
-    p
-      | We'll send password reset instructions.
-    = devise_error_messages!
-    .form-group
-      = f.label :email
-      = f.email_field :email, :autofocus => true, class: 'form-control'
-    = f.submit 'Reset Password', :class => 'button right'
+- content_for :title do
+  - 'パスワード再設定'
+.col-md-6.offset-md-3.col-sm-8.col-sm-offset-2
+  .send-password-title
+    h1
+      | パスワード再設定メールを送る
+  .send-password-form
+    = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, role: 'form' }) do |f|
+      - unless resource.errors.empty?
+        .error-message-field
+          - resource.errors.full_messages.each do |message|
+            .error-message
+              = message
+      .form-group
+        b
+          = f.label :email
+        = f.email_field :email, autofocus: true, class: 'form-control'
+      = f.submit '送信', class: 'btn btn-primary send-password-btn'

@@ -1,29 +1,32 @@
+- content_for :title do
+  - 'ユーザ登録'
 .col-md-8.offset-md-2.col-sm-10.col-sm-offset-1
   h1.step1-title
     | moritsukaQiitaへようこそ！
   .step1-message
     | 新規登録(無料)して利用を開始しましょう。
-  = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { role: 'form' }) do |f|
-    .form-group
-      = f.label :user_name
-      = f.text_field :user_name, autofocus: true, class: 'form-control'
-      - resource.errors.full_messages_for(:user_name).each do |message|
-        .error-message
-          = message
-    .form-group
-      = f.label :email
-      = f.email_field :email, class: 'form-control'
-      - resource.errors.full_messages_for(:email).each do |message|
-        .error-message
-          = message
-    - unless session['devise.oauth_data']
+  .step1-form
+    = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { role: 'form' }) do |f|
       .form-group
-        = f.label :password
-        = f.password_field :password, class: 'form-control'
-        - resource.errors.full_messages_for(:password).each do |message|
+        = f.label :user_name
+        = f.text_field :user_name, autofocus: true, class: 'form-control'
+        - resource.errors.full_messages_for(:user_name).each do |message|
           .error-message
             = message
-    .form-group.authform-right-submit-annotation
-      = link_to '利用規約', '#'
-      = 'に同意のうえ、「利用規約に同意して登録」ボタンを押してください。'
-    = f.submit '利用規約に同意して登録', class: 'btn btn-block btn-primary btn-lg'
+      .form-group
+        = f.label :email
+        = f.email_field :email, class: 'form-control'
+        - resource.errors.full_messages_for(:email).each do |message|
+          .error-message
+            = message
+      - unless session['devise.oauth_data']
+        .form-group
+          = f.label :password
+          = f.password_field :password, class: 'form-control'
+          - resource.errors.full_messages_for(:password).each do |message|
+            .error-message
+              = message
+      .form-group.authform-right-submit-annotation
+        = link_to '利用規約', '#'
+        = 'に同意のうえ、「利用規約に同意して登録」ボタンを押してください。'
+      = f.submit '利用規約に同意して登録', class: 'btn btn-block btn-primary btn-lg'

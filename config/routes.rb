@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
   devise_scope :user do
+    get '/users/password/sent', to: 'users/passwords#sent', as: :sent_user_password
     authenticated :user do
       root to: 'tips#index', as: :authenticated_root
     end

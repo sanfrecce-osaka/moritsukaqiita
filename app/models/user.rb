@@ -22,6 +22,42 @@ class User < ApplicationRecord
     end
   end
 
+  def self.check_token(original_token)
+    reset_password_token = Devise.token_generator.digest(self, :reset_password_token, original_token)
+
+    user = find_or_initialize_with_error_by(:reset_password_token, reset_password_token)
+
+    if user.persisted? && user.reset_password_period_valid?
+      user.reset_password_token = original_token
+    else
+      user.errors.add(:reset_password_token, :expired)
+    end
+
+    user
+  end
+
+  def self.reset_password_by_token(attributes={})
+    original_token = attributes[:reset_password_token]
+    reset_password_token = Devise.token_generator.digest(self, :reset_password_token, original_token)
+
+    user = find_or_initialize_with_error_by(:reset_password_token, reset_password_token)
+
+    if user.persisted? && user.reset_password_period_valid?
+      user.reset_password_token = original_token
+      user.reset_password(attributes[:password])
+    else
+      user.errors.add(:reset_password_token, :expired)
+    end
+
+    user
+  end
+
+  def reset_password(new_password)
+    self.password = new_password
+
+    save
+  end
+
   def password_required?
     if self.social_profiles.present? && !encrypted_password.present?
       false

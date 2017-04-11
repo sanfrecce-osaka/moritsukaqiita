@@ -1,32 +1,58 @@
 class Users::PasswordsController < Devise::PasswordsController
-  # GET /resource/password/new
-  # def new
-  #   super
-  # end
+  def new
+    super
+  end
 
-  # POST /resource/password
-  # def create
-  #   super
-  # end
+  def create
+    self.resource = resource_class.send_reset_password_instructions(resource_params)
+    yield resource if block_given?
 
-  # GET /resource/password/edit?reset_password_token=abcdef
-  # def edit
-  #   super
-  # end
+    if resource.errors.empty?
+      session[:email] = resource.email
+      respond_with(resource, location: after_sending_reset_password_instructions_path_for(resource))
+    else
+      respond_with(resource)
+    end
+  end
 
-  # PUT /resource/password
-  # def update
-  #   super
-  # end
+  def edit
+    self.resource = resource_class.check_token(params[:reset_password_token])
+    if resource.errors.empty?
+      set_minimum_password_length
+      session[:original_token] = params[:reset_password_token]
+      session[:reset_password_token] = resource.reset_password_token
+    else
+      redirect_to unauthenticated_root_url, flash: { warning: 'トークンが無効です。' }
+    end
+  end
 
-  # protected
+  def update
+    self.resource = resource_class.reset_password_by_token(resource_params)
+    yield resource if block_given?
 
-  # def after_resetting_password_path_for(resource)
-  #   super(resource)
-  # end
+    if resource.errors.empty?
+      set_flash_message!(:info, :updated)
+      respond_with resource, location: after_resetting_password_path_for(resource)
+    elsif resource.errors.details[:reset_password_token].select { |value| value[:error] == :expired }.present?
+      redirect_to unauthenticated_root_url, flash: { warning: 'トークンが無効です。' }
+    else
+      set_minimum_password_length
+      respond_with resource
+    end
+  end
 
-  # The path used after sending reset password instructions
-  # def after_sending_reset_password_instructions_path_for(resource_name)
-  #   super(resource_name)
-  # end
+  def sent
+    @email = session[:email]
+    session.delete(:email)
+  end
+
+  protected
+
+  def after_resetting_password_path_for(resource)
+    super(resource)
+  end
+
+  def after_sending_reset_password_instructions_path_for(resource)
+    sent_user_password_path
+  end
 end

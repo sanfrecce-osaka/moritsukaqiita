@@ -1,0 +1,16 @@
+- content_for :title do
+  - 'メール送信完了'
+.col-md-8.offset-md-2.col-sm-10.col-sm-offset-1
+  .sent-password-title
+    h1
+      | パスワード再設定メールを送信しました
+  .sent-password-message
+    p
+      b
+        = @email ? @email : 'あなたのアドレス'
+      = 'へパスワード再設定メールを送信しました。'
+    p
+      | しばらくしてもメールが届かない場合は、スパムフォルダをご確認ください。
+    = link_to unauthenticated_root_path do
+      = fa_icon 'angle-double-left'
+      = 'トップへ戻る'

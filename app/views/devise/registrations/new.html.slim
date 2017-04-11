@@ -1,3 +1,5 @@
+- content_for :title do
+  - '新規登録'
 .col-md-8.offset-md-2.col-sm-10.col-sm-offset-1
   .col-12
     h1.sign-up-title
@@ -30,8 +32,6 @@
           = f.email_field :email, class: 'form-control', placeholder: 'メールアドレス'
         .form-group
           = f.password_field :password, class: 'form-control', placeholder: 'パスワード'
-            .error-message
-              = message
         .form-group.authform-right-submit-annotation
           = link_to '利用規約', '#'
           = 'に同意のうえ、「利用規約に同意して登録」ボタンを押してください。'

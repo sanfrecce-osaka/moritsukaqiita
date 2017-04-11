@@ -1,12 +1,19 @@
-.authform
-  = form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f|
-    h3
-      | Change your password
-    = devise_error_messages!
-    = f.hidden_field :reset_password_token
-    .form-group
-      = f.label :password, 'New password'
-      = f.password_field :password, autofocus: true, autocomplete: 'off', class: 'form-control'
-      = f.label :password_confirmation, 'Confirm new password'
-      = f.password_field :password_confirmation, autocomplete: 'off', class: 'form-control'
-    = f.submit 'Change my Password', :class => 'button right'
+- content_for :title do
+  - 'パスワード再設定'
+.col-md-6.offset-md-3.col-sm-8.col-sm-offset-2
+  .set-password-title
+    h1
+      | パスワード再設定
+  .set-password-form
+    = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f|
+      - unless resource.errors.empty?
+        .error-message-field
+          - resource.errors.full_messages.each do |message|
+            .error-message
+              = message
+      = f.hidden_field :reset_password_token
+      .form-group
+        b
+          = f.label :password, '新しいパスワード'
+        = f.password_field :password, autofocus: true, autocomplete: 'off', class: 'form-control'
+      = f.submit 'パスワードを変更', :class => 'btn btn-primary set-password-btn'
